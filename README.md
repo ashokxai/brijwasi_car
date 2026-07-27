@@ -112,15 +112,18 @@ Health check: `GET /api/health`
 
 ### 3) Admin website — Vercel
 
+> If you see **`404: NOT_FOUND`**, Vercel built the wrong folder. Fix Root Directory (below) and Redeploy.
+
 1. Import `ashokxai/brijwasi_car` on [Vercel](https://vercel.com)
-2. **Root Directory:** `admin` (important)
-3. Framework: Vite · Build: `npm run build` · Output: `dist`
+2. Project → **Settings → General → Root Directory** → set to **`admin`** → Save  
+   (or leave repo root and use the root `vercel.json`, which builds `admin/` for you)
+3. Framework: **Vite** · Build: `npm run build` · Output: `dist`
 4. Environment variable:
    - `VITE_API_URL` = `https://YOUR-API.onrender.com/api`
-5. Deploy → you get e.g. `https://brijwasi-car.vercel.app`
-6. Put that URL into Render as `CLIENT_URL` and `CORS_ORIGINS`
+5. **Deployments → … → Redeploy** (clear cache if needed)
+6. Put the Vercel URL into Render as `CLIENT_URL` and `CORS_ORIGINS`
 
-`admin/vercel.json` already handles React Router SPA rewrites.
+SPA rewrites are in `admin/vercel.json` and root `vercel.json`.
 
 ### 4) Flutter app — stores (not Vercel)
 
