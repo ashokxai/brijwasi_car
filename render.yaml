@@ -1,0 +1,36 @@
+# Deploy backend on Render: https://render.com
+# Dashboard alternative: New Web Service → connect this repo → Root Directory = backend
+services:
+  - type: web
+    name: dt-car-bazaar-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5050
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ADMIN_JWT_EXPIRES_IN
+        value: 1d
+      - key: CLIENT_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: CONTACT_PHONE
+        value: '+918630930402'
+      - key: CONTACT_WHATSAPP
+        value: '918630930402'
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: MAX_FILE_SIZE_MB
+        value: '5'
