@@ -1,4 +1,10 @@
-const admin = require('firebase-admin');
+const {
+  initializeApp,
+  getApps,
+  cert,
+  applicationDefault,
+} = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
 
 let initialized = false;
 let initError = null;
@@ -15,7 +21,6 @@ function parseServiceAccount() {
   if (!raw || !String(raw).trim()) return null;
 
   let text = String(raw).trim();
-  // Remove wrapping quotes if pasted with them in Render UI
   if (
     (text.startsWith("'") && text.endsWith("'")) ||
     (text.startsWith('"') && text.endsWith('"'))
@@ -26,8 +31,8 @@ function parseServiceAccount() {
 }
 
 function initFirebase() {
-  if (initialized) return admin;
-  if (initError) return null;
+  if (initialized) return true;
+  if (initError) return false;
 
   const projectId = process.env.FIREBASE_PROJECT_ID;
 
@@ -39,49 +44,51 @@ function initFirebase() {
     console.warn(
       'Firebase Admin not configured. Set FIREBASE_SERVICE_ACCOUNT_JSON (or FIREBASE_SERVICE_ACCOUNT_BASE64) on Render.'
     );
-    return null;
+    return false;
   }
 
   try {
-    if (
-      process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
-      process.env.FIREBASE_SERVICE_ACCOUNT_BASE64
-    ) {
-      const cred = parseServiceAccount();
-      if (!cred) {
-        throw new Error('Service account JSON is empty');
+    if (getApps().length === 0) {
+      if (
+        process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
+        process.env.FIREBASE_SERVICE_ACCOUNT_BASE64
+      ) {
+        const serviceAccount = parseServiceAccount();
+        if (!serviceAccount) {
+          throw new Error('Service account JSON is empty');
+        }
+        initializeApp({
+          credential: cert(serviceAccount),
+          projectId: projectId || serviceAccount.project_id,
+        });
+      } else {
+        initializeApp({
+          credential: applicationDefault(),
+          projectId,
+        });
       }
-      admin.initializeApp({
-        credential: admin.credential.cert(cred),
-        projectId: projectId || cred.project_id,
-      });
-    } else {
-      admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
-        projectId,
-      });
     }
     initialized = true;
     console.log('Firebase Admin initialized');
-    return admin;
+    return true;
   } catch (err) {
     initError = err;
     console.error('Firebase Admin init failed:', err.message);
-    return null;
+    return false;
   }
 }
 
 async function verifyIdToken(idToken) {
-  const app = initFirebase();
-  if (!app) {
+  const ok = initFirebase();
+  if (!ok) {
     const detail = initError?.message ? ` (${initError.message})` : '';
     const err = new Error(
-      `Firebase Auth is not configured on the server${detail}. Add FIREBASE_SERVICE_ACCOUNT_JSON on Render and redeploy.`
+      `Firebase Auth is not configured on the server${detail}. Add FIREBASE_SERVICE_ACCOUNT_BASE64 on Render and redeploy.`
     );
     err.statusCode = 503;
     throw err;
   }
-  return app.auth().verifyIdToken(idToken);
+  return getAuth().verifyIdToken(idToken);
 }
 
 module.exports = { initFirebase, verifyIdToken };
