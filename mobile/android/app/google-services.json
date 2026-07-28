@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "838288782435",
+    "project_id": "brijwasicar",
+    "storage_bucket": "brijwasicar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838288782435:android:eab31517a19b58eed3f456",
+        "android_client_info": {
+          "package_name": "com.dtcarbazaar.dt_car_bazaar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdvHvsjsA8kymo_RrhSfKrnQ2mHbdDBdo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

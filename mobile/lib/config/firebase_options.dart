@@ -1,15 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 
-/// 1) Firebase Console → Project settings → Your apps → Android/Web config
-/// 2) Paste values below (keep empty to use legacy API password login)
+/// Auto-generated from google-services.json — do not paste secrets from service accounts here.
 class DefaultFirebaseOptions {
-  // TODO: paste from Firebase Console
-  static const String apiKey = '';
-  static const String appId = ''; // Android appId, e.g. 1:123:android:abc
-  static const String messagingSenderId = '';
-  static const String projectId = '';
-  static const String authDomain = ''; // projectId.firebaseapp.com
-  static const String storageBucket = '';
+  static const String apiKey = 'AIzaSyCdvHvsjsA8kymo_RrhSfKrnQ2mHbdDBdo';
+  static const String appId = '1:838288782435:android:eab31517a19b58eed3f456';
+  static const String messagingSenderId = '838288782435';
+  static const String projectId = 'brijwasicar';
+  static const String authDomain = 'brijwasicar.firebaseapp.com';
+  static const String storageBucket = 'brijwasicar.firebasestorage.app';
 
   static bool get isConfigured =>
       apiKey.isNotEmpty && appId.isNotEmpty && projectId.isNotEmpty;
@@ -20,8 +18,8 @@ class DefaultFirebaseOptions {
       appId: appId,
       messagingSenderId: messagingSenderId,
       projectId: projectId,
-      authDomain: authDomain.isEmpty ? null : authDomain,
-      storageBucket: storageBucket.isEmpty ? null : storageBucket,
+      authDomain: authDomain,
+      storageBucket: storageBucket,
     );
   }
 }
