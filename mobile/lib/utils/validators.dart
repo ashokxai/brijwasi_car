@@ -86,11 +86,13 @@ class Validators {
   }
 
   static String? year(String? value) {
-    if (value == null || value.isEmpty) return 'Year is required';
+    if (value == null || value.isEmpty) return 'Year of purchase is required';
     final n = int.tryParse(value);
     final now = DateTime.now().year;
-    if (n == null) return 'Enter a valid year';
-    if (n < 1980 || n > now) return 'Year must be between 1980 and $now';
+    if (n == null) return 'Enter a valid year of purchase';
+    if (n < 1980 || n > now) {
+      return 'Year of purchase must be between 1980 and $now';
+    }
     return null;
   }
 

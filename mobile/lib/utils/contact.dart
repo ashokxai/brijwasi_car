@@ -32,7 +32,7 @@ Car Key: $key
 Title: ${car.title}
 Brand: ${car.brand.name}
 Model: ${car.model.name}
-Year: ${car.year}
+Year of Purchase: ${car.year}
 Price: ${formatPrice(car.price)}
 KM Driven: ${car.kmDriven}
 Fuel: ${car.fuelType.name}

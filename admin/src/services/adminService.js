@@ -3,6 +3,9 @@ import api from './api';
 export const adminLogin = (email, password) =>
   api.post('/admin/login', { email, password });
 
+export const adminFirebaseLogin = (idToken) =>
+  api.post('/admin/login/firebase', { idToken });
+
 export const getDashboard = () => api.get('/admin/dashboard');
 
 export const getAdminCars = (params) => api.get('/admin/cars', { params });

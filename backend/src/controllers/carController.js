@@ -162,9 +162,42 @@ exports.updateCar = asyncHandler(async (req, res) => {
     }
   });
 
-  if (req.files && req.files.length) {
-    const newImages = req.files.map((f) => `/uploads/${f.filename}`);
-    car.images = [...car.images, ...newImages].slice(0, 10);
+  if (req.body.year !== undefined) car.year = Number(req.body.year);
+  if (req.body.price !== undefined) car.price = Number(req.body.price);
+  if (req.body.kmDriven !== undefined) car.kmDriven = Number(req.body.kmDriven);
+  if (req.body.isCertified !== undefined) {
+    car.isCertified =
+      req.body.isCertified === true ||
+      req.body.isCertified === 'true' ||
+      req.body.isCertified === '1';
+  }
+
+  const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+  if (req.body.keepImages !== undefined || uploaded.length) {
+    let keepImages = car.images || [];
+    if (req.body.keepImages !== undefined) {
+      try {
+        const parsed =
+          typeof req.body.keepImages === 'string'
+            ? JSON.parse(req.body.keepImages)
+            : req.body.keepImages;
+        keepImages = Array.isArray(parsed) ? parsed.map(String) : [];
+      } catch {
+        throw new AppError('Invalid keepImages payload', 400);
+      }
+      // Only allow keeping images that already belong to this listing
+      const existing = new Set((car.images || []).map(String));
+      keepImages = keepImages.filter((img) => existing.has(String(img)));
+    }
+    const nextImages = [...keepImages, ...uploaded].slice(0, 10);
+    const minPhotos = isAdmin ? 1 : 3;
+    if (nextImages.length < minPhotos) {
+      throw new AppError(
+        `Listing must have at least ${minPhotos} photo${minPhotos > 1 ? 's' : ''}`,
+        400
+      );
+    }
+    car.images = nextImages;
   }
 
   if (!isAdmin && isOwner) {
@@ -173,7 +206,9 @@ exports.updateCar = asyncHandler(async (req, res) => {
 
   if (isAdmin && req.body.status) {
     car.status = req.body.status;
-    if (req.body.rejectionReason) car.rejectionReason = req.body.rejectionReason;
+    if (req.body.rejectionReason !== undefined) {
+      car.rejectionReason = String(req.body.rejectionReason || '').trim();
+    }
   }
 
   await car.save();

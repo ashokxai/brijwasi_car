@@ -387,7 +387,7 @@ class _SellCarScreenState extends ConsumerState<SellCarScreen> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   value: _year,
-                  decoration: const InputDecoration(labelText: 'Year of Manufacture', filled: true, fillColor: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Year of Purchase', filled: true, fillColor: Colors.white),
                   items: List.generate(25, (i) {
                     final y = (DateTime.now().year - i).toString();
                     return DropdownMenuItem(value: y, child: Text(y));

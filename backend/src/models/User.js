@@ -12,7 +12,15 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     phone: { type: String, required: true, trim: true },
-    password: { type: String, required: true, minlength: 6, select: false },
+    password: {
+      type: String,
+      minlength: 6,
+      select: false,
+      required: function requiredPassword() {
+        return !this.firebaseUid;
+      },
+    },
+    firebaseUid: { type: String, sparse: true, unique: true, trim: true },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Car' }],
     isActive: { type: Boolean, default: true },
@@ -21,11 +29,12 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre('save', async function hashPassword() {
-  if (!this.isModified('password')) return;
+  if (!this.isModified('password') || !this.password) return;
   this.password = await bcrypt.hash(this.password, 12);
 });
 
 userSchema.methods.comparePassword = function comparePassword(candidate) {
+  if (!this.password) return Promise.resolve(false);
   return bcrypt.compare(candidate, this.password);
 };
 

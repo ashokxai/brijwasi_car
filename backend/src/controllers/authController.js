@@ -1,8 +1,10 @@
+const crypto = require('crypto');
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
 const { signToken } = require('../utils/tokens');
 const config = require('../config');
+const { verifyIdToken } = require('../config/firebase');
 
 function authResponse(user, token) {
   return {
@@ -10,6 +12,35 @@ function authResponse(user, token) {
     token,
     user: user.toSafeObject(),
   };
+}
+
+async function findOrLinkFirebaseUser(decoded) {
+  const email = String(decoded.email || '')
+    .trim()
+    .toLowerCase();
+  if (!email) {
+    throw new AppError('Firebase account has no email', 400);
+  }
+
+  let user =
+    (await User.findOne({ firebaseUid: decoded.uid })) ||
+    (await User.findOne({ email }));
+
+  if (!user) {
+    throw new AppError(
+      'Account not found. Please register first (app) or create the admin user in Mongo/seed.',
+      404
+    );
+  }
+
+  if (!user.firebaseUid) {
+    user.firebaseUid = decoded.uid;
+    await user.save();
+  } else if (user.firebaseUid !== decoded.uid) {
+    throw new AppError('This email is linked to another Firebase account', 409);
+  }
+
+  return user;
 }
 
 exports.register = asyncHandler(async (req, res) => {
@@ -76,6 +107,100 @@ exports.adminLogin = asyncHandler(async (req, res) => {
 
   if (!user.isActive) {
     throw new AppError('Account is deactivated', 403);
+  }
+
+  const token = signToken(
+    { id: user._id, role: user.role },
+    config.adminJwtExpiresIn
+  );
+  res.json(authResponse(user, token));
+});
+
+exports.firebaseLogin = asyncHandler(async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) throw new AppError('idToken is required', 400);
+
+  let decoded;
+  try {
+    decoded = await verifyIdToken(idToken);
+  } catch (err) {
+    throw new AppError(err.message || 'Invalid Firebase token', err.statusCode || 401);
+  }
+
+  const user = await findOrLinkFirebaseUser(decoded);
+  if (!user.isActive) throw new AppError('Account is deactivated', 403);
+  if (user.role !== 'customer') {
+    throw new AppError('Please use Admin Login', 403);
+  }
+
+  const token = signToken({ id: user._id, role: user.role });
+  res.json(authResponse(user, token));
+});
+
+exports.firebaseRegister = asyncHandler(async (req, res) => {
+  const { idToken, name, phone } = req.body;
+  if (!idToken) throw new AppError('idToken is required', 400);
+  if (!name || !phone) throw new AppError('Name and phone are required', 400);
+
+  let decoded;
+  try {
+    decoded = await verifyIdToken(idToken);
+  } catch (err) {
+    throw new AppError(err.message || 'Invalid Firebase token', err.statusCode || 401);
+  }
+
+  const email = String(decoded.email || '')
+    .trim()
+    .toLowerCase();
+  const existing = await User.findOne({
+    $or: [{ email }, { phone: String(phone).trim() }, { firebaseUid: decoded.uid }],
+  });
+
+  if (existing && existing.role === 'admin') {
+    throw new AppError('Please use Admin Login', 403);
+  }
+  if (existing && existing.firebaseUid && existing.firebaseUid !== decoded.uid) {
+    throw new AppError('Email or phone already registered', 400);
+  }
+
+  let user = existing;
+  if (!user) {
+    user = await User.create({
+      name: String(name).trim(),
+      email,
+      phone: String(phone).trim(),
+      firebaseUid: decoded.uid,
+      role: 'customer',
+      password: crypto.randomBytes(32).toString('hex'),
+    });
+  } else {
+    user.firebaseUid = decoded.uid;
+    if (name) user.name = String(name).trim();
+    if (phone) user.phone = String(phone).trim();
+    await user.save();
+  }
+
+  if (!user.isActive) throw new AppError('Account is deactivated', 403);
+
+  const token = signToken({ id: user._id, role: user.role });
+  res.status(201).json(authResponse(user, token));
+});
+
+exports.firebaseAdminLogin = asyncHandler(async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) throw new AppError('idToken is required', 400);
+
+  let decoded;
+  try {
+    decoded = await verifyIdToken(idToken);
+  } catch (err) {
+    throw new AppError(err.message || 'Invalid Firebase token', err.statusCode || 401);
+  }
+
+  const user = await findOrLinkFirebaseUser(decoded);
+  if (!user.isActive) throw new AppError('Account is deactivated', 403);
+  if (user.role !== 'admin') {
+    throw new AppError('Not an admin account', 403);
   }
 
   const token = signToken(

@@ -204,7 +204,7 @@ Call/WhatsApp: +91 863 093 0402
               _SpecRow('Car Key', car.carKey.isEmpty ? '-' : car.carKey),
               _SpecRow('Brand', car.brand.name),
               _SpecRow('Model', car.model.name),
-              _SpecRow('Year of Manufacture', '${car.year}'),
+              _SpecRow('Year of Purchase', '${car.year}'),
               _SpecRow('KM Driven', '${car.kmDriven} KM'),
               _SpecRow('Fuel Type', car.fuelType.name),
               _SpecRow('Transmission', car.transmission),

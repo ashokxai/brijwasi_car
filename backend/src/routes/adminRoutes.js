@@ -11,6 +11,7 @@ const { createCarRules } = require('../validators/carValidators');
 const router = express.Router();
 
 router.post('/login', loginRules, validate, authController.adminLogin);
+router.post('/login/firebase', authController.firebaseAdminLogin);
 
 router.use(protect, restrictTo('admin'));
 

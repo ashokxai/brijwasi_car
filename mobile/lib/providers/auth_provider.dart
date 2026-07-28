@@ -164,6 +164,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final msg = (e as dynamic).response?.data?['message'];
       if (msg is String && msg.isNotEmpty) return msg;
     } catch (_) {}
+    final raw = e.toString();
+    if (raw.startsWith('Exception: ')) {
+      return raw.substring('Exception: '.length);
+    }
     return 'Login failed. Please check your details and try again.';
   }
 }
