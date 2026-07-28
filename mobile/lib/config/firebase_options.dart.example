@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 
-/// Keep API keys OUT of git.
-/// For local/device builds, run:
-///   scripts/apply-firebase-android.sh ~/Downloads/google-services.json
+/// Local-only values. Copy from google-services.json via:
+///   scripts/apply-firebase-android.sh
+/// This tracked file stays empty so API keys are not in git.
 class DefaultFirebaseOptions {
   static const String apiKey = '';
   static const String appId = '';

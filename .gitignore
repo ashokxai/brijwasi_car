@@ -22,10 +22,32 @@ build/
 uploads/*
 !uploads/.gitkeep
 
-# Secrets / local env
+# Secrets / local env (never commit real values)
 .env
 .env.local
+.env.development
+.env.production
 .env.*.local
+!.env.example
+!**/.env.example
+!.env.production.example
+!**/.env.production.example
+!.env.render.example
+!**/.env.render.example
+
+# Firebase / Google client configs with keys (keep local only)
+**/google-services.json
+**/GoogleService-Info.plist
+!**/google-services.json.example
+
+# Service accounts & key material
+*firebase-adminsdk*.json
+*serviceAccount*.json
+*-adminsdk-*.json
+**/render-firebase-env*.txt
+**/*credentials*.json
+**/*.pem
+**/*.p12
 
 # OS / IDE
 .DS_Store
@@ -40,3 +62,7 @@ coverage/
 *.aab
 *.ipa
 .vercel
+
+# Local generated Firebase options (may contain API keys)
+**/firebase_options.local.dart
+**/firebase_options.local.*.dart
