@@ -43,7 +43,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     final error = ref.read(authProvider).error ??
-        'Invalid email/phone or password. Please sign up if you are new.';
+        'Invalid email or password. Please sign up if you are new.';
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -117,9 +117,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ],
                 AppTextField(
                   controller: _emailCtrl,
-                  label: 'Email / Phone',
+                  label: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  validator: Validators.emailOrPhone,
+                  validator: Validators.email,
                 ),
                 const SizedBox(height: 14),
                 AppTextField(

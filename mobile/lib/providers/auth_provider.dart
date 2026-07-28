@@ -152,7 +152,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         return 'Cannot reach server. Check your connection.';
       }
       if (e.response?.statusCode == 401) {
-        return 'Invalid email/phone or password';
+        return 'Invalid email or password';
       }
       if (e.response?.statusCode == 403) {
         return data is Map && data['message'] is String

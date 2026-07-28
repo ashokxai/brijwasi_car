@@ -4,7 +4,7 @@ import { LockOutlined, MailOutlined, SafetyCertificateOutlined } from '@ant-desi
 import { Navigate, useNavigate } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../context/AuthContext';
-import { emailOrPhoneRule, passwordRule } from '../utils/validators';
+import { emailRule, passwordRule } from '../utils/validators';
 
 function loginErrorMessage(err) {
   if (err instanceof FirebaseError) {
@@ -21,7 +21,7 @@ function loginErrorMessage(err) {
     }
     return err.message || 'Firebase login failed';
   }
-  return err.response?.data?.message || err.message || 'Invalid email/phone or password';
+  return err.response?.data?.message || err.message || 'Invalid email or password';
 }
 
 export default function LoginPage() {
@@ -59,7 +59,7 @@ export default function LoginPage() {
           </Typography.Paragraph>
         </Space>
         <Form layout="vertical" onFinish={onFinish} style={{ marginTop: 24 }} validateTrigger={['onBlur', 'onChange']}>
-          <Form.Item name="email" label="Email" rules={[emailOrPhoneRule()]}>
+          <Form.Item name="email" label="Email" rules={[emailRule()]}>
             <Input prefix={<MailOutlined />} size="large" placeholder="admin@dtcarbazaar.com" />
           </Form.Item>
           <Form.Item name="password" label="Password" rules={[passwordRule(6)]}>
