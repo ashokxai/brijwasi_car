@@ -6,11 +6,17 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const config = require('./config');
 const { initFirebase } = require('./config/firebase');
+const { isCloudinaryConfigured } = require('./config/cloudinary');
 const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 // Warm Firebase Admin if credentials are present
 initFirebase();
+console.log(
+  isCloudinaryConfigured()
+    ? 'Cloudinary configured — uploads go to cloud'
+    : 'Cloudinary not configured — uploads use local /uploads (dev only)'
+);
 
 const authRoutes = require('./routes/authRoutes');
 const carRoutes = require('./routes/carRoutes');

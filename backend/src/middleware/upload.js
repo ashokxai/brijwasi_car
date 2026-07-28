@@ -9,17 +9,6 @@ if (!fs.existsSync(uploadRoot)) {
   fs.mkdirSync(uploadRoot, { recursive: true });
 }
 
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, uploadRoot);
-  },
-  filename(req, file, cb) {
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${unique}${ext}`);
-  },
-});
-
 function fileFilter(req, file, cb) {
   const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   if (!allowed.includes(file.mimetype)) {
@@ -28,8 +17,9 @@ function fileFilter(req, file, cb) {
   cb(null, true);
 }
 
+// Always buffer in memory; controller chooses Cloudinary vs local disk.
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter,
   limits: { fileSize: config.maxFileSizeMb * 1024 * 1024, files: 10 },
 });

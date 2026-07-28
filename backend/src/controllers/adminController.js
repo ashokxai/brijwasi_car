@@ -8,6 +8,7 @@ const Banner = require('../models/Banner');
 const Notification = require('../models/Notification');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
+const { fileToImageUrl } = require('../config/cloudinary');
 
 exports.getDashboard = asyncHandler(async (req, res) => {
   const [
@@ -180,7 +181,9 @@ exports.fuelTypes = crudHandlers(FuelType, 'Fuel type');
 exports.banners = {
   ...crudHandlers(Banner, 'Banner'),
   create: asyncHandler(async (req, res) => {
-    const imageFromUpload = req.file ? `/uploads/${req.file.filename}` : '';
+    const imageFromUpload = req.file
+      ? await fileToImageUrl(req.file, 'dt-car-bazaar/banners')
+      : '';
     const imageUrl = imageFromUpload || req.body.imageUrl;
     if (!imageUrl) throw new AppError('Banner image is required', 400);
 
@@ -204,7 +207,7 @@ exports.banners = {
       banner.isActive = req.body.isActive !== 'false' && req.body.isActive !== false;
     }
     if (req.file) {
-      banner.imageUrl = `/uploads/${req.file.filename}`;
+      banner.imageUrl = await fileToImageUrl(req.file, 'dt-car-bazaar/banners');
     } else if (req.body.imageUrl) {
       banner.imageUrl = req.body.imageUrl;
     }

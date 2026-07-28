@@ -4,6 +4,7 @@ const Notification = require('../models/Notification');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
 const { generateCarKey } = require('../utils/carKey');
+const { filesToImageUrls } = require('../config/cloudinary');
 
 const populateFields = [
   { path: 'brand', select: 'name' },
@@ -98,7 +99,7 @@ exports.createCar = asyncHandler(async (req, res) => {
     throw new AppError('Maximum 10 photos allowed', 400);
   }
 
-  const images = files.map((f) => `/uploads/${f.filename}`);
+  const images = await filesToImageUrls(files, 'dt-car-bazaar/cars');
   const carKey = await generateCarKey();
   const payload = {
     ...req.body,
@@ -172,7 +173,7 @@ exports.updateCar = asyncHandler(async (req, res) => {
       req.body.isCertified === '1';
   }
 
-  const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+  const uploaded = await filesToImageUrls(req.files || [], 'dt-car-bazaar/cars');
   if (req.body.keepImages !== undefined || uploaded.length) {
     let keepImages = car.images || [];
     if (req.body.keepImages !== undefined) {
