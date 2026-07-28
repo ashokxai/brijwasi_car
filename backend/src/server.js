@@ -83,6 +83,21 @@ async function start() {
   } catch (err) {
     console.warn('Car key backfill skipped:', err.message);
   }
+
+  // Render free has no Shell. Set SEED_ON_START=true once, deploy, then turn it off.
+  if (String(process.env.SEED_ON_START).toLowerCase() === 'true') {
+    try {
+      console.log('SEED_ON_START enabled — seeding database...');
+      const { seed } = require('./seed');
+      const { seedCars } = require('./seedCars');
+      await seed();
+      await seedCars();
+      console.log('SEED_ON_START finished. Set SEED_ON_START=false in Render and redeploy.');
+    } catch (err) {
+      console.warn('SEED_ON_START failed:', err.message);
+    }
+  }
+
   app.listen(config.port, () => {
     console.log(`Server running on port ${config.port}`);
   });

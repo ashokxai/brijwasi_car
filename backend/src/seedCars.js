@@ -136,10 +136,15 @@ async function seedCars() {
   }
 
   console.log('Sample cars seeded');
-  process.exit(0);
 }
 
-seedCars().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (require.main === module) {
+  seedCars()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
+}
+
+module.exports = { seedCars };
