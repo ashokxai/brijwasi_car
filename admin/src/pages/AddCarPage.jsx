@@ -131,7 +131,7 @@ export default function AddCarPage() {
           </Form.Item>
         </Space>
         <Space size="large" style={{ display: 'flex' }} wrap>
-          <Form.Item name="year" label="Year" rules={[yearRule()]}>
+          <Form.Item name="year" label="Year of Purchase" rules={[yearRule()]}>
             <InputNumber min={1980} max={new Date().getFullYear()} style={{ width: 160 }} />
           </Form.Item>
           <Form.Item name="price" label="Price (₹)" rules={[positiveNumberRule('Price')]}>

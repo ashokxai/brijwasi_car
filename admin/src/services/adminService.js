@@ -10,6 +10,11 @@ export const getAdminCars = (params) => api.get('/admin/cars', { params });
 export const updateCarStatus = (id, data) =>
   api.patch(`/admin/cars/${id}/status`, data);
 
+export const updateAdminCar = (id, formData) =>
+  api.put(`/admin/cars/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+
 export const getUsers = () => api.get('/admin/users');
 
 export const getBrands = () => api.get('/admin/brands');

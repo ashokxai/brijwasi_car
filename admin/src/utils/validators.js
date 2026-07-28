@@ -133,11 +133,11 @@ export function yearRule() {
   return {
     validator(_, value) {
       if (value === undefined || value === null || value === '') {
-        return Promise.reject(new Error('Year is required'));
+        return Promise.reject(new Error('Year of purchase is required'));
       }
       const n = Number(value);
       if (!Number.isInteger(n) || n < 1980 || n > now) {
-        return Promise.reject(new Error(`Year must be between 1980 and ${now}`));
+        return Promise.reject(new Error(`Year of purchase must be between 1980 and ${now}`));
       }
       return Promise.resolve();
     },
