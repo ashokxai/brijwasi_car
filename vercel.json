@@ -4,6 +4,9 @@
   "installCommand": "npm install --prefix admin",
   "buildCommand": "npm run build --prefix admin",
   "outputDirectory": "admin/dist",
+  "env": {
+    "VITE_API_URL": "https://dt-car-bazaar-api.onrender.com/api"
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

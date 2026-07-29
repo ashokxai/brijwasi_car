@@ -20,7 +20,7 @@ export default function SettingsPage() {
         <Descriptions.Item label="Contact Phone">{contact.phone}</Descriptions.Item>
         <Descriptions.Item label="WhatsApp">{contact.whatsapp}</Descriptions.Item>
         <Descriptions.Item label="API">
-          {import.meta.env.VITE_API_URL || 'http://localhost:5050/api'}
+          {import.meta.env.VITE_API_URL || 'https://dt-car-bazaar-api.onrender.com/api'}
         </Descriptions.Item>
         <Descriptions.Item label="Listing rule">
           Customer submissions stay Pending until admin approval

@@ -45,7 +45,7 @@ import {
   nonNegativeIntRule,
 } from '../utils/validators';
 
-const API_HOST = (import.meta.env.VITE_API_URL || 'http://localhost:5050/api').replace(/\/api$/, '');
+const API_HOST = (import.meta.env.VITE_API_URL || 'https://dt-car-bazaar-api.onrender.com/api').replace(/\/api$/, '');
 
 function imageUrl(path) {
   if (!path) return null;
