@@ -208,7 +208,7 @@ class _SellCarScreenState extends ConsumerState<SellCarScreen> {
               ],
               const SizedBox(height: 10),
               Text(
-                'Your details for DT Car Bazaar have been submitted successfully. Our team will review the specifications and car images (${_photos.length} uploaded). A representative will contact you within 24 hours for verification and listing approval.',
+                'Your details for Brijwasi Car Bazaar have been submitted successfully. Our team will review the specifications and car images (${_photos.length} uploaded). A representative will contact you within 24 hours for verification and listing approval.',
                 textAlign: TextAlign.center,
               ),
             ],

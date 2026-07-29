@@ -63,16 +63,16 @@ class _CarDetailScreenState extends ConsumerState<CarDetailScreen> {
               IconButton(
                 onPressed: () {
                   final text = '''
-DT Car Bazaar listing
+Brijwasi Car Bazaar listing
 
 Car Key: ${car.carKey.isNotEmpty ? car.carKey : '-'}
 ${car.title}
 ${formatPrice(car.price)}
 ${car.year} • ${car.fuelType.name} • ${car.kmDriven} KM
 
-Call/WhatsApp: +91 863 093 0402
+Call/WhatsApp: +91 706 022 1729
 '''.trim();
-                  Share.share(text, subject: 'DT Car Bazaar - ${car.title}');
+                  Share.share(text, subject: 'Brijwasi Car Bazaar - ${car.title}');
                 },
                 icon: const Icon(Icons.share_outlined),
               ),

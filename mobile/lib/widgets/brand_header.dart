@@ -5,7 +5,7 @@ import '../config/theme.dart';
 class BrandHeader extends StatelessWidget {
   const BrandHeader({
     super.key,
-    this.subtitle = 'Welcome to DT Car Bazaar. Login to Buy or Sell.',
+    this.subtitle = 'Welcome to Brijwasi Car Bazaar. Login to Buy or Sell.',
   });
 
   final String subtitle;
@@ -15,29 +15,25 @@ class BrandHeader extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 88,
+          width: 120,
           height: 88,
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.gold.withValues(alpha: 0.15),
-            border: Border.all(color: AppColors.gold, width: 2),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.gold.withValues(alpha: 0.35)),
           ),
-          child: const Center(
-            child: Text(
-              'DT',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-                color: AppColors.charcoal,
-              ),
-            ),
+          child: Image.asset(
+            'assets/images/logo.png',
+            fit: BoxFit.contain,
           ),
         ),
         const SizedBox(height: 16),
         Text(
           AppConfig.appName,
+          textAlign: TextAlign.center,
           style: const TextStyle(
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w800,
             color: AppColors.charcoal,
           ),

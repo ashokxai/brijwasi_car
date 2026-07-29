@@ -377,7 +377,7 @@ export default function CarsPage() {
       <Space style={{ marginBottom: 12 }} wrap>
         <Input.Search
           allowClear
-          placeholder="Search by Car Key or title (e.g. DT-2026-00001)"
+          placeholder="Search by Car Key or title (e.g. BC-2026-00001)"
           style={{ width: 360 }}
           value={search}
           onChange={(e) => setSearch(e.target.value)}

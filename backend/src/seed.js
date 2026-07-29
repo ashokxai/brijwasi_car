@@ -10,13 +10,13 @@ const Banner = require('./models/Banner');
 async function seed() {
   await connectDB();
 
-  const adminEmail = 'admin@dtcarbazaar.com';
+  const adminEmail = 'admin@brijwasicarbazaar.com';
   let admin = await User.findOne({ email: adminEmail });
   if (!admin) {
     admin = await User.create({
-      name: 'DT Admin',
+      name: 'Brijwasi Admin',
       email: adminEmail,
-      phone: '8630930402',
+      phone: '7060221729',
       password: 'Admin@123',
       role: 'admin',
     });

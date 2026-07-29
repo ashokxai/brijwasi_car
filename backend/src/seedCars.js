@@ -125,7 +125,7 @@ async function seedCars() {
       ownership: sample.ownership,
       insuranceValidity: sample.insuranceValidity,
       city: city._id,
-      description: `${sample.title} available at DT Car Bazaar. Well maintained.`,
+      description: `${sample.title} available at Brijwasi Car Bazaar. Well maintained.`,
       images: [`/uploads/${filename}`, `/uploads/${filename}`, `/uploads/${filename}`],
       status: 'approved',
       isCertified: sample.isCertified,

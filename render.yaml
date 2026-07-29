@@ -2,7 +2,7 @@
 # Dashboard alternative: New Web Service → connect this repo → Root Directory = backend
 services:
   - type: web
-    name: dt-car-bazaar-api
+    name: brijwasi-car-bazaar-api
     runtime: node
     rootDir: backend
     plan: free
@@ -25,9 +25,9 @@ services:
       - key: CORS_ORIGINS
         sync: false
       - key: CONTACT_PHONE
-        value: '+918630930402'
+        value: '+917060221729'
       - key: CONTACT_WHATSAPP
-        value: '918630930402'
+        value: '917060221729'
       - key: UPLOAD_DIR
         value: uploads
       - key: MAX_FILE_SIZE_MB

@@ -28,6 +28,19 @@ body {
   padding: 16px;
 }
 
+.logo-image {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.logo-text {
+  min-width: 0;
+}
+
 .logo-mark {
   width: 36px;
   height: 36px;

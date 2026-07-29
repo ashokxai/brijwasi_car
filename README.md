@@ -1,11 +1,11 @@
-# DT Car Bazaar
+# Brijwasi Car Bazaar
 
 Used car marketplace:
 - `mobile/` — Flutter customer app
 - `backend/` — Node.js + Express + MongoDB + JWT
 - `admin/` — React + Vite + Ant Design admin panel
 
-**Call / WhatsApp:** +91 863 093 0402
+**Call / WhatsApp:** +91 706 022 1729
 
 ---
 
@@ -15,7 +15,7 @@ Used car marketplace:
 |-------|--------|--------|
 | 1 | Setup, Auth, Backend, DB | Done |
 | 2 | Home, Search, Details, Favorites | Done |
-| 3 | Sell Car, Image Upload, Approval | Done |
+| 3 | Sell Car, Image Upload, Listing | Done |
 | 4 | Admin Dashboard + CRUD | Done |
 | 5 | Polish, banners, share, deploy packaging | Done |
 
@@ -48,7 +48,8 @@ flutter pub get
 flutter run -d emulator-5554 --dart-define=API_BASE_URL=http://10.0.2.2:5050/api
 ```
 
-**Admin:** `admin@dtcarbazaar.com` / `Admin@123`
+**Admin (after seed):** `admin@brijwasicarbazaar.com` / `Admin@123`  
+(If you already seeded earlier, the old admin email may still be in Mongo/Firebase.)
 
 ---
 
@@ -87,7 +88,7 @@ Repo: https://github.com/ashokxai/brijwasi_car
 
 1. Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
 2. Create a database user + allow network access (`0.0.0.0/0` for simple start)
-3. Copy connection string, e.g. `mongodb+srv://user:pass@cluster/.../dt_car_bazaar`
+3. Copy connection string, e.g. `mongodb+srv://user:pass@cluster/.../brijwasi_car_bazaar`
 
 ### 2) API — Render
 
@@ -98,7 +99,7 @@ Option B — Manual:
 2. **Root Directory:** `backend`
 3. Build: `npm install` · Start: `npm start`
 4. Set env vars from `backend/.env.example` (at least `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL`, `CORS_ORIGINS`, `NODE_ENV=production`)
-5. After deploy, note your API URL, e.g. `https://dt-car-bazaar-api.onrender.com`
+5. After deploy, note your API URL (existing live host may still be `https://dt-car-bazaar-api.onrender.com` until renamed on Render)
 6. Seed once (Render shell or one-off job):
 
 ```bash
@@ -108,7 +109,7 @@ npm run seed:cars
 
 Health check: `GET /api/health`
 
-> Uploaded images on free Render disk can reset. For production, move to Cloudinary/S3 later.
+> Uploaded images on free Render disk can reset. For production, use Cloudinary/S3.
 
 ### 3) Admin website — Vercel
 
@@ -174,4 +175,4 @@ Upload the APK/AAB to Google Play (and IPA to App Store when ready).
 
 ## Car Key
 
-Every listing gets a unique key like `DT-2026-00011` for admin search and WhatsApp inquiries.
+Every listing gets a unique key like `BC-2026-00011` for admin search and WhatsApp inquiries.

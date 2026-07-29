@@ -40,7 +40,7 @@ export default function ReportsPage() {
         <Col span={8}>
           <Card title="Contact">
             <p>All Call / WhatsApp redirects go to:</p>
-            <Typography.Text strong>+91 863 093 0402</Typography.Text>
+            <Typography.Text strong>+91 706 022 1729</Typography.Text>
           </Card>
         </Col>
       </Row>

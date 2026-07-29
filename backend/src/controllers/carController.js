@@ -99,7 +99,7 @@ exports.createCar = asyncHandler(async (req, res) => {
     throw new AppError('Maximum 10 photos allowed', 400);
   }
 
-  const images = await filesToImageUrls(files, 'dt-car-bazaar/cars');
+  const images = await filesToImageUrls(files, 'brijwasi-car-bazaar/cars');
   const carKey = await generateCarKey();
   const payload = {
     ...req.body,
@@ -173,7 +173,7 @@ exports.updateCar = asyncHandler(async (req, res) => {
       req.body.isCertified === '1';
   }
 
-  const uploaded = await filesToImageUrls(req.files || [], 'dt-car-bazaar/cars');
+  const uploaded = await filesToImageUrls(req.files || [], 'brijwasi-car-bazaar/cars');
   if (req.body.keepImages !== undefined || uploaded.length) {
     let keepImages = car.images || [];
     if (req.body.keepImages !== undefined) {

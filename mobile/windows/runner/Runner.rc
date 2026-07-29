@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.dtcarbazaar" "\0"
-            VALUE "FileDescription", "dt_car_bazaar" "\0"
+            VALUE "CompanyName", "com.brijwasicarbazaar" "\0"
+            VALUE "FileDescription", "Brijwasi Car Bazaar" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "dt_car_bazaar" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.dtcarbazaar. All rights reserved." "\0"
-            VALUE "OriginalFilename", "dt_car_bazaar.exe" "\0"
-            VALUE "ProductName", "dt_car_bazaar" "\0"
+            VALUE "InternalName", "brijwasi_car_bazaar" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 com.brijwasicarbazaar. All rights reserved." "\0"
+            VALUE "OriginalFilename", "brijwasi_car_bazaar.exe" "\0"
+            VALUE "ProductName", "Brijwasi Car Bazaar" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

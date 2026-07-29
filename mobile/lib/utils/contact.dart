@@ -24,7 +24,7 @@ Future<void> launchWhatsApp({String? message}) async {
 String buildCarWhatsAppMessage(CarModel car) {
   final key = car.carKey.isNotEmpty ? car.carKey : car.id;
   return '''
-Hi DT Car Bazaar,
+Hi Brijwasi Car Bazaar,
 
 I am interested in this car:
 

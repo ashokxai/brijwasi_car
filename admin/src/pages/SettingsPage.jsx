@@ -3,7 +3,7 @@ import { Descriptions, Typography, message } from 'antd';
 import api from '../services/api';
 
 export default function SettingsPage() {
-  const [contact, setContact] = useState({ phone: '+918630930402', whatsapp: '918630930402' });
+  const [contact, setContact] = useState({ phone: '+917060221729', whatsapp: '917060221729' });
 
   useEffect(() => {
     api
@@ -16,7 +16,7 @@ export default function SettingsPage() {
     <div>
       <Typography.Title level={3}>Settings</Typography.Title>
       <Descriptions bordered column={1}>
-        <Descriptions.Item label="App Name">DT Car Bazaar</Descriptions.Item>
+        <Descriptions.Item label="App Name">Brijwasi Car Bazaar</Descriptions.Item>
         <Descriptions.Item label="Contact Phone">{contact.phone}</Descriptions.Item>
         <Descriptions.Item label="WhatsApp">{contact.whatsapp}</Descriptions.Item>
         <Descriptions.Item label="API">

@@ -22,7 +22,7 @@ function configureCloudinary() {
   return true;
 }
 
-async function uploadImageBuffer(buffer, folder = 'dt-car-bazaar') {
+async function uploadImageBuffer(buffer, folder = 'brijwasi-car-bazaar') {
   if (!configureCloudinary()) {
     const err = new Error(
       'Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET.'
@@ -58,7 +58,7 @@ function saveLocalFile(file) {
   return `/uploads/${filename}`;
 }
 
-async function filesToImageUrls(files, folder = 'dt-car-bazaar/cars') {
+async function filesToImageUrls(files, folder = 'brijwasi-car-bazaar/cars') {
   if (!files || !files.length) return [];
 
   if (isCloudinaryConfigured()) {
@@ -68,7 +68,7 @@ async function filesToImageUrls(files, folder = 'dt-car-bazaar/cars') {
   return files.map((file) => saveLocalFile(file));
 }
 
-async function fileToImageUrl(file, folder = 'dt-car-bazaar/banners') {
+async function fileToImageUrl(file, folder = 'brijwasi-car-bazaar/banners') {
   if (!file) return null;
   const [url] = await filesToImageUrls([file], folder);
   return url;

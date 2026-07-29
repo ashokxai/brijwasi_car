@@ -16,37 +16,39 @@ class SplashScreen extends StatelessWidget {
             colors: [Color(0xFF2B2B2B), Color(0xFF111111)],
           ),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 42,
-              backgroundColor: AppColors.gold,
-              child: Text(
-                'DT',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
+            Container(
+              width: 160,
+              height: 120,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Image.asset(
+                'assets/images/logo.png',
+                fit: BoxFit.contain,
               ),
             ),
-            SizedBox(height: 18),
-            Text(
-              'DT Car Bazaar',
+            const SizedBox(height: 18),
+            const Text(
+              'Brijwasi Car Bazaar',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 26,
+                fontSize: 24,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Buy & Sell Trusted Used Cars',
               style: TextStyle(color: AppColors.gold),
             ),
-            SizedBox(height: 28),
-            CircularProgressIndicator(color: AppColors.gold),
+            const SizedBox(height: 28),
+            const CircularProgressIndicator(color: AppColors.gold),
           ],
         ),
       ),

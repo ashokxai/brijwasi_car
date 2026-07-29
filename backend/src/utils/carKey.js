@@ -2,7 +2,7 @@ const Car = require('../models/Car');
 
 async function generateCarKey(session = null) {
   const year = new Date().getFullYear();
-  const prefix = `DT-${year}-`;
+  const prefix = `BC-${year}-`;
   const query = Car.findOne({ carKey: new RegExp(`^${prefix}`) }).sort({ carKey: -1 });
   if (session) query.session(session);
   const last = await query.lean();

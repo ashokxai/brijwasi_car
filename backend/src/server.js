@@ -60,7 +60,7 @@ const authLimiter = rateLimit({
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'DT Car Bazaar API',
+    message: 'Brijwasi Car Bazaar API',
     health: '/api/health',
     docs: {
       auth: ['POST /api/register', 'POST /api/login', 'GET /api/profile'],
@@ -72,7 +72,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'DT Car Bazaar API running' });
+  res.json({ success: true, message: 'Brijwasi Car Bazaar API running' });
 });
 
 app.use('/api', authLimiter);

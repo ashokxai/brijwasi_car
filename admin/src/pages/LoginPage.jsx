@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Card, Form, Input, Typography, message, Space } from 'antd';
-import { LockOutlined, MailOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../context/AuthContext';
@@ -48,19 +48,21 @@ export default function LoginPage() {
     <div className="login-page">
       <Card className="login-card" bordered={false}>
         <Space direction="vertical" size="middle" style={{ width: '100%' }} align="center">
-          <div className="admin-shield">
-            <SafetyCertificateOutlined style={{ fontSize: 42, color: '#C9A227' }} />
-          </div>
+          <img
+            src="/logo.png"
+            alt="Brijwasi Car Bazaar"
+            style={{ width: 120, height: 'auto', objectFit: 'contain' }}
+          />
           <Typography.Title level={3} style={{ margin: 0 }}>
             Admin Login
           </Typography.Title>
           <Typography.Paragraph type="secondary" style={{ textAlign: 'center' }}>
-            DT Car Bazaar — secure admin access (Firebase)
+            Brijwasi Car Bazaar — secure admin access (Firebase)
           </Typography.Paragraph>
         </Space>
         <Form layout="vertical" onFinish={onFinish} style={{ marginTop: 24 }} validateTrigger={['onBlur', 'onChange']}>
           <Form.Item name="email" label="Email" rules={[emailRule()]}>
-            <Input prefix={<MailOutlined />} size="large" placeholder="admin@dtcarbazaar.com" />
+            <Input prefix={<MailOutlined />} size="large" placeholder="admin@brijwasicarbazaar.com" />
           </Form.Item>
           <Form.Item name="password" label="Password" rules={[passwordRule(6)]}>
             <Input.Password prefix={<LockOutlined />} size="large" placeholder="Password" />

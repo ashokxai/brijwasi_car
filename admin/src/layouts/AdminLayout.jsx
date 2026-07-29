@@ -48,10 +48,15 @@ export default function AdminLayout() {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider breakpoint="lg" collapsedWidth={64} theme="dark">
         <div className="logo-block">
-          <div className="logo-mark">DT</div>
-          <Typography.Text style={{ color: '#C9A227', fontWeight: 700 }}>
-            Car Bazaar
-          </Typography.Text>
+          <img src="/logo.png" alt="Brijwasi Car Bazaar" className="logo-image" />
+          <div className="logo-text">
+            <Typography.Text style={{ color: '#fff', fontWeight: 700, display: 'block', lineHeight: 1.2 }}>
+              Brijwasi
+            </Typography.Text>
+            <Typography.Text style={{ color: '#C9A227', fontWeight: 600, fontSize: 12 }}>
+              Car Bazaar
+            </Typography.Text>
+          </div>
         </div>
         <Menu
           theme="dark"

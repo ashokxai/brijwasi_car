@@ -7,18 +7,18 @@ import 'services/firebase_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FirebaseService.init();
-  runApp(const ProviderScope(child: DtCarBazaarApp()));
+  runApp(const ProviderScope(child: BrijwasiCarBazaarApp()));
 }
 
-class DtCarBazaarApp extends ConsumerWidget {
-  const DtCarBazaarApp({super.key});
+class BrijwasiCarBazaarApp extends ConsumerWidget {
+  const BrijwasiCarBazaarApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'DT Car Bazaar',
+      title: 'Brijwasi Car Bazaar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,

@@ -7,9 +7,9 @@ class AppConfig {
     defaultValue: 'http://127.0.0.1:5050/api',
   );
 
-  static const String appName = 'DT Car Bazaar';
-  static const String contactPhone = '+918630930402';
-  static const String contactWhatsapp = '918630930402';
+  static const String appName = 'Brijwasi Car Bazaar';
+  static const String contactPhone = '+917060221729';
+  static const String contactWhatsapp = '917060221729';
 
   static String get callUrl => 'tel:$contactPhone';
   static String get whatsappUrl => 'https://wa.me/$contactWhatsapp';
