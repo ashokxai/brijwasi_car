@@ -1,10 +1,11 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../config/app_config.dart';
 import '../models/user_model.dart';
 import '../repositories/auth_repository.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
+import '../utils/api_errors.dart';
 
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
@@ -59,7 +60,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = const AuthState(isLoading: false, isAuthenticated: false);
         return;
       }
-      final user = await _repo.profile().timeout(const Duration(seconds: 8));
+      final user = await _repo.profile().timeout(AppConfig.apiReceiveTimeout);
       state = AuthState(user: user, isAuthenticated: true, isLoading: false);
     } catch (e) {
       debugPrint('Auth bootstrap failed: $e');
@@ -138,37 +139,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   String _extractError(Object e) {
-    if (e is DioException) {
-      final data = e.response?.data;
-      if (data is Map && data['message'] is String && (data['message'] as String).isNotEmpty) {
-        return data['message'] as String;
-      }
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.sendTimeout) {
-        return 'Connection timed out. Please try again.';
-      }
-      if (e.type == DioExceptionType.connectionError) {
-        return 'Cannot reach server. Check your connection.';
-      }
-      if (e.response?.statusCode == 401) {
-        return 'Invalid email or password';
-      }
-      if (e.response?.statusCode == 403) {
-        return data is Map && data['message'] is String
-            ? data['message'] as String
-            : 'Access denied';
-      }
-    }
-    try {
-      final msg = (e as dynamic).response?.data?['message'];
-      if (msg is String && msg.isNotEmpty) return msg;
-    } catch (_) {}
-    final raw = e.toString();
-    if (raw.startsWith('Exception: ')) {
-      return raw.substring('Exception: '.length);
-    }
-    return 'Login failed. Please check your details and try again.';
+    return apiErrorMessage(
+      e,
+      fallback: 'Login failed. Please check your details and try again.',
+    );
   }
 }
 

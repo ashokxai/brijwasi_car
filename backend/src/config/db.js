@@ -32,7 +32,11 @@ async function connectDB() {
   if (info.invalid) {
     throw new Error('MONGODB_URI is not a valid URL. Check for missing characters or broken paste.');
   }
-  if (!info.hasPassword || info.passwordLength < 1) {
+  const isLocal =
+    info.host === '127.0.0.1:27017' ||
+    info.host === 'localhost:27017' ||
+    info.host.startsWith('mongo:');
+  if (!isLocal && (!info.hasPassword || info.passwordLength < 1)) {
     throw new Error('MONGODB_URI has no password. Replace YOUR_REAL_PASSWORD with the Atlas password.');
   }
   if (String(process.env.MONGODB_URI).includes('<') || String(process.env.MONGODB_URI).includes('>')) {
