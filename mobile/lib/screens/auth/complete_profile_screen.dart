@@ -3,49 +3,56 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/firebase_service.dart';
 import '../../utils/validators.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/brand_header.dart';
 
-class RegisterScreen extends ConsumerStatefulWidget {
-  const RegisterScreen({super.key});
+class CompleteProfileScreen extends ConsumerStatefulWidget {
+  const CompleteProfileScreen({super.key});
 
   @override
-  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
 }
 
-class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  final _phoneCtrl = TextEditingController();
-  final _passwordCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (FirebaseService.auth.currentUser == null && mounted) {
+        context.go('/login');
+      }
+    });
+  }
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
     _emailCtrl.dispose();
-    _phoneCtrl.dispose();
-    _passwordCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
-    final ok = await ref.read(authProvider.notifier).register(
-          name: _nameCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          phone: _phoneCtrl.text.trim(),
-          password: _passwordCtrl.text,
+
+    final ok = await ref.read(authProvider.notifier).completePhoneEmail(
+          _emailCtrl.text.trim(),
         );
     if (!mounted) return;
     if (ok) {
       context.go('/home');
-    } else {
-      final error = ref.read(authProvider).error ?? 'Registration failed';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+      return;
     }
+
+    final error = ref.read(authProvider).error ?? 'Could not save email. Try again.';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error), backgroundColor: Colors.red.shade700),
+    );
   }
 
   @override
@@ -58,6 +65,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.charcoal,
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -66,7 +74,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             key: _formKey,
             child: Column(
               children: [
-                const BrandHeader(subtitle: 'Create your account to buy or sell cars.'),
+                const BrandHeader(
+                  subtitle: 'Phone verified. Add your email to finish signup.',
+                ),
                 const SizedBox(height: 24),
                 if (auth.error != null && auth.error!.isNotEmpty) ...[
                   Container(
@@ -85,34 +95,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                 ],
                 AppTextField(
-                  controller: _nameCtrl,
-                  label: 'Full Name',
-                  validator: Validators.name,
-                ),
-                const SizedBox(height: 12),
-                AppTextField(
                   controller: _emailCtrl,
                   label: 'Email',
                   keyboardType: TextInputType.emailAddress,
                   validator: Validators.email,
                 ),
-                const SizedBox(height: 12),
-                AppTextField(
-                  controller: _phoneCtrl,
-                  label: 'Phone',
-                  keyboardType: TextInputType.phone,
-                  validator: Validators.phone,
-                ),
-                const SizedBox(height: 12),
-                AppTextField(
-                  controller: _passwordCtrl,
-                  label: 'Password',
-                  obscureText: true,
-                  validator: Validators.password,
-                ),
                 const SizedBox(height: 22),
                 AppButton(
-                  label: 'CREATE ACCOUNT',
+                  label: 'CONTINUE',
                   loading: auth.isLoading,
                   onPressed: _submit,
                 ),
@@ -124,10 +114,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     style: TextStyle(color: Colors.grey.shade700, fontSize: 13, height: 1.35),
                   ),
                 ],
-                TextButton(
-                  onPressed: () => context.go('/login'),
-                  child: const Text('Already have an account? Login'),
-                ),
               ],
             ),
           ),

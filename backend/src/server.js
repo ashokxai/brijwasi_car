@@ -63,7 +63,13 @@ app.get('/', (req, res) => {
     message: 'Brijwasi Car Bazaar API',
     health: '/api/health',
     docs: {
-      auth: ['POST /api/register', 'POST /api/login', 'GET /api/profile'],
+      auth: [
+        'POST /api/register',
+        'POST /api/login',
+        'POST /api/auth/firebase/phone/login',
+        'POST /api/auth/firebase/phone/complete',
+        'GET /api/profile',
+      ],
       cars: ['GET /api/cars', 'GET /api/cars/:id'],
       admin: ['POST /api/admin/login', 'GET /api/admin/dashboard'],
       contact: ['GET /api/contact'],

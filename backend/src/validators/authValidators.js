@@ -75,4 +75,18 @@ const updateProfileRules = [
     .withMessage('Password must be at least 6 characters'),
 ];
 
-module.exports = { registerRules, loginRules, updateProfileRules };
+const phoneCompleteRules = [
+  body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be 2-50 characters'),
+];
+
+module.exports = {
+  registerRules,
+  loginRules,
+  updateProfileRules,
+  phoneCompleteRules,
+};

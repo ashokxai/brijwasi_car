@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../screens/auth/forgot_password_screen.dart';
+import '../screens/auth/complete_profile_screen.dart';
+import '../screens/auth/email_login_screen.dart';
 import '../screens/auth/login_screen.dart';
-import '../screens/auth/register_screen.dart';
 import '../screens/car/car_detail_screen.dart';
 import '../screens/favorites/favorites_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -41,7 +42,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
+      GoRoute(path: '/login/email', builder: (_, __) => const EmailLoginScreen()),
+      GoRoute(path: '/complete-profile', builder: (_, __) => const CompleteProfileScreen()),
+      GoRoute(
+        path: '/register',
+        redirect: (_, __) => '/login',
+      ),
       GoRoute(path: '/forgot-password', builder: (_, __) => const ForgotPasswordScreen()),
       GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
       GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
@@ -60,8 +66,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authProvider);
       final loc = state.matchedLocation;
-      final loggingIn =
-          loc == '/login' || loc == '/register' || loc == '/forgot-password';
+      final loggingIn = loc == '/login' ||
+          loc == '/login/email' ||
+          loc == '/complete-profile' ||
+          loc == '/forgot-password' ||
+          loc == '/register';
       final onSplash = loc == '/splash';
 
       // Keep user on auth screens while login/register is in progress.

@@ -5,6 +5,11 @@ const asyncHandler = require('../utils/asyncHandler');
 const { signToken } = require('../utils/tokens');
 const config = require('../config');
 const { verifyIdToken } = require('../config/firebase');
+const { normalizeIndianPhone } = require('../utils/phone');
+
+function phoneFromDecoded(decoded) {
+  return normalizeIndianPhone(decoded.phone_number);
+}
 
 function authResponse(user, token) {
   return {
@@ -135,6 +140,112 @@ exports.firebaseLogin = asyncHandler(async (req, res) => {
 
   const token = signToken({ id: user._id, role: user.role });
   res.json(authResponse(user, token));
+});
+
+exports.firebasePhoneLogin = asyncHandler(async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) throw new AppError('idToken is required', 400);
+
+  let decoded;
+  try {
+    decoded = await verifyIdToken(idToken);
+  } catch (err) {
+    throw new AppError(err.message || 'Invalid Firebase token', err.statusCode || 401);
+  }
+
+  const phone = phoneFromDecoded(decoded);
+  if (!phone) {
+    throw new AppError('Phone number missing from Firebase token', 400);
+  }
+
+  let user =
+    (await User.findOne({ firebaseUid: decoded.uid })) ||
+    (await User.findOne({ phone }));
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      code: 'NEEDS_EMAIL',
+      message: 'Complete signup with your email',
+      phone,
+    });
+  }
+
+  if (user.role === 'admin') {
+    throw new AppError('Please use Admin Login', 403);
+  }
+  if (!user.isActive) throw new AppError('Account is deactivated', 403);
+
+  if (!user.firebaseUid) {
+    user.firebaseUid = decoded.uid;
+    await user.save();
+  } else if (user.firebaseUid !== decoded.uid) {
+    throw new AppError('This phone is linked to another account', 409);
+  }
+
+  const token = signToken({ id: user._id, role: user.role });
+  res.json(authResponse(user, token));
+});
+
+exports.firebasePhoneComplete = asyncHandler(async (req, res) => {
+  const { idToken, email, name } = req.body;
+  if (!idToken) throw new AppError('idToken is required', 400);
+  if (!email) throw new AppError('Email is required', 400);
+
+  let decoded;
+  try {
+    decoded = await verifyIdToken(idToken);
+  } catch (err) {
+    throw new AppError(err.message || 'Invalid Firebase token', err.statusCode || 401);
+  }
+
+  const phone = phoneFromDecoded(decoded);
+  if (!phone) {
+    throw new AppError('Phone number missing from Firebase token', 400);
+  }
+
+  const emailLower = String(email).trim().toLowerCase();
+  const displayName =
+    String(name || '').trim() ||
+    emailLower.split('@')[0] ||
+    'User';
+
+  const existing = await User.findOne({
+    $or: [{ email: emailLower }, { phone }, { firebaseUid: decoded.uid }],
+  });
+
+  if (existing && existing.role === 'admin') {
+    throw new AppError('Please use Admin Login', 403);
+  }
+  if (existing && existing.firebaseUid && existing.firebaseUid !== decoded.uid) {
+    throw new AppError('Email or phone already registered', 400);
+  }
+  if (existing && existing.email === emailLower && existing.firebaseUid !== decoded.uid) {
+    throw new AppError('Email already registered', 400);
+  }
+
+  let user = existing;
+  if (!user) {
+    user = await User.create({
+      name: displayName,
+      email: emailLower,
+      phone,
+      firebaseUid: decoded.uid,
+      role: 'customer',
+      password: crypto.randomBytes(32).toString('hex'),
+    });
+  } else {
+    user.firebaseUid = decoded.uid;
+    user.email = emailLower;
+    user.phone = phone;
+    if (displayName) user.name = displayName;
+    await user.save();
+  }
+
+  if (!user.isActive) throw new AppError('Account is deactivated', 403);
+
+  const token = signToken({ id: user._id, role: user.role });
+  res.status(201).json(authResponse(user, token));
 });
 
 exports.firebaseRegister = asyncHandler(async (req, res) => {

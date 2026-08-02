@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/app_config.dart';
+import '../models/phone_auth_result.dart';
 import '../models/user_model.dart';
 import '../repositories/auth_repository.dart';
 import '../services/api_client.dart';
@@ -69,7 +70,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<PhoneSignInOutcome> finishPhoneSignIn() async {
     state = state.copyWith(
       isLoading: true,
       clearError: true,
@@ -77,7 +78,31 @@ class AuthNotifier extends StateNotifier<AuthState> {
       clearUser: true,
     );
     try {
-      final result = await _repo.login(email, password);
+      final result = await _repo.syncPhoneLogin();
+      if (result.needsEmail) {
+        state = const AuthState(isLoading: false, isAuthenticated: false);
+        return PhoneSignInOutcome.needsEmail;
+      }
+      state = AuthState(
+        user: result.user,
+        isAuthenticated: true,
+        isLoading: false,
+      );
+      return PhoneSignInOutcome.success;
+    } catch (e) {
+      state = AuthState(
+        isLoading: false,
+        isAuthenticated: false,
+        error: _extractError(e),
+      );
+      return PhoneSignInOutcome.failed;
+    }
+  }
+
+  Future<bool> completePhoneEmail(String email) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    try {
+      final result = await _repo.completePhoneSignup(email);
       state = AuthState(
         user: result.user,
         isAuthenticated: true,
@@ -94,12 +119,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<bool> register({
-    required String name,
-    required String email,
-    required String phone,
-    required String password,
-  }) async {
+  Future<bool> login(String email, String password) async {
     state = state.copyWith(
       isLoading: true,
       clearError: true,
@@ -107,12 +127,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       clearUser: true,
     );
     try {
-      final result = await _repo.register(
-        name: name,
-        email: email,
-        phone: phone,
-        password: password,
-      );
+      final result = await _repo.login(email, password);
       state = AuthState(
         user: result.user,
         isAuthenticated: true,
@@ -139,6 +154,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   String _extractError(Object e) {
+    if (e is Exception && e.toString().startsWith('Exception: ')) {
+      return e.toString().substring('Exception: '.length);
+    }
     return apiErrorMessage(
       e,
       fallback: 'Login failed. Please check your details and try again.',

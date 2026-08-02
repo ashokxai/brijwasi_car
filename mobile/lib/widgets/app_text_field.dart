@@ -10,6 +10,7 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.suffix,
+    this.prefixText,
   });
 
   final TextEditingController controller;
@@ -18,6 +19,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final Widget? suffix;
+  final String? prefixText;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class AppTextField extends StatelessWidget {
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
+        prefixText: prefixText,
         filled: true,
         fillColor: Colors.white,
         suffixIcon: suffix,
