@@ -176,11 +176,19 @@ exports.firebasePhoneLogin = asyncHandler(async (req, res) => {
   }
   if (!user.isActive) throw new AppError('Account is deactivated', 403);
 
-  if (!user.firebaseUid) {
+  // Phone OTP already proved ownership. Re-link firebaseUid when it changed
+  // (e.g. Firebase project migration) instead of blocking login.
+  if (user.firebaseUid !== decoded.uid) {
+    const conflict = await User.findOne({
+      firebaseUid: decoded.uid,
+      _id: { $ne: user._id },
+    });
+    if (conflict) {
+      conflict.firebaseUid = undefined;
+      await conflict.save();
+    }
     user.firebaseUid = decoded.uid;
     await user.save();
-  } else if (user.firebaseUid !== decoded.uid) {
-    throw new AppError('This phone is linked to another account', 409);
   }
 
   const token = signToken({ id: user._id, role: user.role });
