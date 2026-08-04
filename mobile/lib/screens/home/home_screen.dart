@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../config/app_config.dart';
 import '../../config/theme.dart';
 import '../../providers/car_provider.dart';
 import '../../widgets/app_bottom_nav.dart';
+import '../../widgets/app_logo.dart';
 import '../../widgets/car_list_card.dart';
 import '../../widgets/home_banner_carousel.dart';
 
@@ -64,14 +64,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.softGray,
       appBar: AppBar(
-        title: const Text(AppConfig.appName),
         backgroundColor: Colors.white,
-        foregroundColor: AppColors.charcoal,
-        elevation: 0.4,
+        elevation: 0,
+        toolbarHeight: 64,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: AppColors.charcoal),
+          onPressed: () {},
+        ),
+        title: const AppLogo(width: 220),
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: () => context.push('/notifications'),
-            icon: const Icon(Icons.notifications_none),
+            icon: const Icon(Icons.notifications_none, color: AppColors.charcoal),
           ),
         ],
       ),
@@ -84,31 +89,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           children: [
-            TextField(
-              controller: _searchCtrl,
-              onSubmitted: (v) {
-                ref.read(carFiltersProvider.notifier).state =
-                    filters.copyWith(search: v.trim());
-              },
-              decoration: InputDecoration(
-                hintText: 'Search cars...',
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    ref.read(carFiltersProvider.notifier).state =
-                        filters.copyWith(search: _searchCtrl.text.trim());
-                  },
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.border),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.border),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppRadii.field),
+                boxShadow: AppShadows.field,
+              ),
+              child: TextField(
+                controller: _searchCtrl,
+                onSubmitted: (v) {
+                  ref.read(carFiltersProvider.notifier).state =
+                      filters.copyWith(search: v.trim());
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search cars...',
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.search, color: AppColors.teal),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.tune, color: AppColors.charcoal),
+                    onPressed: () {
+                      ref.read(carFiltersProvider.notifier).state =
+                          filters.copyWith(search: _searchCtrl.text.trim());
+                    },
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadii.field),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadii.field),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
@@ -296,10 +307,13 @@ class _FilterChipButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          backgroundColor: active ? AppColors.gold.withValues(alpha: 0.15) : Colors.white,
+          backgroundColor: active ? AppColors.tealLight : Colors.white,
           foregroundColor: AppColors.charcoal,
-          side: BorderSide(color: active ? AppColors.gold : AppColors.border),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          side: BorderSide(color: active ? AppColors.teal : AppColors.border),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.chip)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          elevation: 0,
+          shadowColor: Colors.transparent,
         ),
         child: Text(label),
       ),

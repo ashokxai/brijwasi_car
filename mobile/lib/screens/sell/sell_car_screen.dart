@@ -214,18 +214,18 @@ class _SellCarScreenState extends ConsumerState<SellCarScreen> {
             ],
           ),
           actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  context.go('/home');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.gold,
-                  foregroundColor: Colors.white,
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                context.go('/home');
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  color: AppColors.teal,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
                 ),
-                child: const Text('OK'),
               ),
             ),
           ],
@@ -271,8 +271,13 @@ class _SellCarScreenState extends ConsumerState<SellCarScreen> {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               children: [
                 const Text(
-                  'UPLOAD CAR PHOTOS (Min 3 Max 10)',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  'UPLOAD CAR PHOTOS (Min 3, Max 10)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                    color: AppColors.charcoal,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Wrap(
@@ -356,6 +361,16 @@ class _SellCarScreenState extends ConsumerState<SellCarScreen> {
                   ),
                 ],
                 const SizedBox(height: 18),
+                const Text(
+                  'CAR SPECIFICATIONS',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    letterSpacing: 0.6,
+                    color: AppColors.teal,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: _titleCtrl,
                   decoration: const InputDecoration(labelText: 'Title (e.g. Swift VDI)', filled: true, fillColor: Colors.white),

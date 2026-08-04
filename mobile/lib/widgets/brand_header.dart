@@ -1,48 +1,45 @@
 import 'package:flutter/material.dart';
 import '../config/app_config.dart';
 import '../config/theme.dart';
+import 'app_logo.dart';
 
 class BrandHeader extends StatelessWidget {
   const BrandHeader({
     super.key,
-    this.subtitle = 'Welcome to Brijwasi Car Bazaar. Login to Buy or Sell.',
+    this.subtitle = 'Login to Buy or Sell.',
+    this.showWelcomeLine = true,
   });
 
   final String subtitle;
+  final bool showWelcomeLine;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 120,
-          height: 88,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.gold.withValues(alpha: 0.35)),
+        const AppLogo(height: 72),
+        const SizedBox(height: 20),
+        if (showWelcomeLine) ...[
+          Text(
+            'Welcome to ${AppConfig.appName}.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: AppColors.charcoal,
+              height: 1.3,
+            ),
           ),
-          child: Image.asset(
-            'assets/images/logo.png',
-            fit: BoxFit.contain,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          AppConfig.appName,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: AppColors.charcoal,
-          ),
-        ),
-        const SizedBox(height: 8),
+          const SizedBox(height: 6),
+        ],
         Text(
           subtitle,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey.shade700, height: 1.4),
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 14,
+            height: 1.4,
+          ),
         ),
       ],
     );

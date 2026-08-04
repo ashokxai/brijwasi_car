@@ -20,19 +20,7 @@ class BrijwasiCarBazaarApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Brijwasi Car Bazaar',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.gold,
-          primary: AppColors.gold,
-          surface: Colors.white,
-        ),
-        scaffoldBackgroundColor: AppColors.softGray,
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-        ),
-      ),
+      theme: buildAppTheme(),
       routerConfig: router,
     );
   }

@@ -12,6 +12,7 @@ import '../screens/home/home_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/sell/sell_car_screen.dart';
+import '../providers/splash_provider.dart';
 import '../screens/splash/splash_screen.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../config/theme.dart';
@@ -21,6 +22,7 @@ import '../widgets/car_list_card.dart';
 class _RouterRefresh extends ChangeNotifier {
   _RouterRefresh(Ref ref) {
     _sub = ref.listen<AuthState>(authProvider, (_, __) => notifyListeners());
+    ref.listen<bool>(splashPresentationCompleteProvider, (_, __) => notifyListeners());
   }
 
   late final ProviderSubscription<AuthState> _sub;
@@ -72,9 +74,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           loc == '/forgot-password' ||
           loc == '/register';
       final onSplash = loc == '/splash';
+      final splashDone = ref.read(splashPresentationCompleteProvider);
 
       // Keep user on auth screens while login/register is in progress.
       if (auth.isLoading && loggingIn) return null;
+
+      if (onSplash && !splashDone) return null;
 
       // Initial session check only.
       if (auth.isLoading) {

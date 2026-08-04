@@ -106,14 +106,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                   loading: auth.isLoading,
                   onPressed: _submit,
                 ),
-                if (auth.isLoading) ...[
-                  const SizedBox(height: 10),
-                  Text(
-                    'Server may take up to 45 seconds to wake up. Please keep this screen open.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey.shade700, fontSize: 13, height: 1.35),
-                  ),
-                ],
+                if (auth.isLoading) const SizedBox(height: 8),
               ],
             ),
           ),

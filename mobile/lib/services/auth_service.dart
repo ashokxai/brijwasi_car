@@ -131,6 +131,8 @@ class AuthService {
         return 'SMS limit reached. Try again later.';
       case 'missing-verification-code':
         return 'Enter the OTP sent to your phone';
+      case 'app-not-authorized':
+        return 'Firebase setup incomplete. In Console (brijwasi-car-prod) add SHA-1 & SHA-256 for this app, wait 5 min, reinstall. On emulator use a test phone number or a real device.';
       default:
         return e.message ?? 'Authentication failed';
     }

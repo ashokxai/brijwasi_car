@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../config/theme.dart';
 import '../../providers/car_provider.dart';
+import '../../widgets/app_logo.dart';
 import '../../utils/contact.dart';
 import '../../utils/formatters.dart';
 
@@ -46,8 +47,13 @@ class _CarDetailScreenState extends ConsumerState<CarDetailScreen> {
           appBar: AppBar(
             backgroundColor: Colors.white,
             foregroundColor: AppColors.charcoal,
-            elevation: 0.4,
-            title: Text(car.carKey.isNotEmpty ? car.carKey : 'Car Details'),
+            elevation: 0,
+            title: const AppLogo(width: 200),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).maybePop(),
+            ),
             actions: [
               IconButton(
                 onPressed: () async {
@@ -198,7 +204,11 @@ Call/WhatsApp: +91 706 022 1729
               const SizedBox(height: 20),
               const Text(
                 'Specifications',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.teal,
+                ),
               ),
               const SizedBox(height: 8),
               _SpecRow('Car Key', car.carKey.isEmpty ? '-' : car.carKey),
@@ -225,34 +235,23 @@ Call/WhatsApp: +91 706 022 1729
           bottomNavigationBar: SafeArea(
             child: Container(
               color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
               child: Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: launchCall,
-                      icon: const Icon(Icons.call),
-                      label: const Text('Call'),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(48),
-                        foregroundColor: AppColors.charcoal,
-                        side: const BorderSide(color: AppColors.gold),
-                      ),
+                    child: _ContactPill(
+                      icon: Icons.call,
+                      label: 'Call',
+                      onTap: launchCall,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => launchWhatsApp(
-                        message: buildCarWhatsAppMessage(car),
-                      ),
-                      icon: const Icon(Icons.chat),
-                      label: const Text('WhatsApp Chat'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.gold,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size.fromHeight(48),
-                      ),
+                    child: _ContactPill(
+                      icon: Icons.chat,
+                      label: 'WhatsApp Chat',
+                      iconColor: AppColors.whatsapp,
+                      onTap: () => launchWhatsApp(message: buildCarWhatsAppMessage(car)),
                     ),
                   ),
                 ],
@@ -261,6 +260,52 @@ Call/WhatsApp: +91 706 022 1729
           ),
         );
       },
+    );
+  }
+}
+
+class _ContactPill extends StatelessWidget {
+  const _ContactPill({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.iconColor,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final Color? iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(28),
+      elevation: 2,
+      shadowColor: Colors.black26,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(28),
+        child: Container(
+          height: 50,
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: iconColor ?? AppColors.charcoal, size: 20),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  label,
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -275,7 +320,7 @@ class _SpecIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.goldDark, size: 22),
+        Icon(icon, color: AppColors.teal, size: 22),
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
       ],

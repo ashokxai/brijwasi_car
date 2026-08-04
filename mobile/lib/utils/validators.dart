@@ -31,12 +31,41 @@ class Validators {
     return null;
   }
 
+  /// Returns last 10 digits for Indian numbers, or shorter string if incomplete.
+  static String tenDigitPhone(String value) {
+    final digits = normalizePhone(value.trim());
+    if (digits.isEmpty) return '';
+    if (digits.length == 10) return digits;
+    if (digits.startsWith('91') && digits.length == 12) {
+      return digits.substring(2);
+    }
+    if (digits.length > 10) {
+      return digits.substring(digits.length - 10);
+    }
+    return digits;
+  }
+
   static String? phone(String? value) {
-    final v = normalizePhone(value?.trim() ?? '');
-    final digits = v.startsWith('91') && v.length > 10 ? v.substring(v.length - 10) : v;
-    if (digits.isEmpty) return 'Phone is required';
-    if (!phoneRegex.hasMatch(digits)) {
-      return 'Enter a valid 10-digit mobile number';
+    final digits = normalizePhone(value?.trim() ?? '');
+    if (digits.isEmpty) return 'Mobile number is required';
+    if (digits.length > 10 && !digits.startsWith('91')) {
+      return 'Enter only 10 digits (without country code)';
+    }
+    final ten = tenDigitPhone(value ?? '');
+    if (ten.length != 10) {
+      return 'Mobile number must be exactly 10 digits';
+    }
+    if (!phoneRegex.hasMatch(ten)) {
+      return 'Enter a valid Indian mobile number (starts with 6–9)';
+    }
+    return null;
+  }
+
+  static String? otp(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return 'OTP is required';
+    if (!RegExp(r'^\d{6}$').hasMatch(v)) {
+      return 'Enter the 6-digit OTP from SMS';
     }
     return null;
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
@@ -65,12 +66,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _showError('Firebase is not configured. Use email login instead.');
       return;
     }
-    if (_step == _OtpStep.phone && !_formKey.currentState!.validate()) return;
+    if (!isResend && _step == _OtpStep.phone) {
+      if (!_formKey.currentState!.validate()) return;
+    }
 
-    final phone = (isResend || _step == _OtpStep.code)
+    final raw = (isResend || _step == _OtpStep.code)
         ? _displayPhone
-        : _phoneCtrl.text.trim();
-    if (phone.isEmpty) return;
+        : _phoneCtrl.text;
+    final phone = Validators.tenDigitPhone(raw);
+    if (phone.length != 10) {
+      _showError('Enter a valid 10-digit mobile number');
+      return;
+    }
     final e164 = PhoneAuthService.toE164(phone);
 
     setState(() {
@@ -117,11 +124,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _showError('Request OTP first');
       return;
     }
+    if (!_formKey.currentState!.validate()) return;
+
     final code = _otpCtrl.text.trim();
-    if (code.length < 6) {
-      _showError('Enter the 6-digit OTP');
-      return;
-    }
 
     ref.read(authProvider.notifier).clearError();
     try {
@@ -170,18 +175,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final loading = auth.isLoading || _sendingOtp;
 
     return Scaffold(
-      backgroundColor: AppColors.softGray,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const BrandHeader(
-                  subtitle: 'Login with OTP sent to your mobile number.',
-                ),
-                const SizedBox(height: 24),
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppGradients.authBackground,
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+                  const BrandHeader(
+                    subtitle: 'Login with OTP sent to your mobile number.',
+                  ),
+                  const SizedBox(height: 28),
                 if (auth.error != null && auth.error!.isNotEmpty) ...[
                   Container(
                     width: double.infinity,
@@ -201,14 +212,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 if (_step == _OtpStep.phone) ...[
                   AppTextField(
                     controller: _phoneCtrl,
-                    label: 'Mobile number',
+                    label: 'Enter Mobile Number',
+                    hintText: '10-digit number',
                     keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.done,
                     validator: Validators.phone,
+                    prefix: const Icon(Icons.phone, color: AppColors.teal),
                     prefixText: '+91 ',
+                    maxLength: 10,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 24),
                   AppButton(
-                    label: 'SEND OTP',
+                    label: 'GET OTP',
                     loading: loading,
                     onPressed: _sendOtp,
                   ),
@@ -222,11 +240,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   AppTextField(
                     controller: _otpCtrl,
                     label: 'Enter OTP',
+                    hintText: '6-digit code',
                     keyboardType: TextInputType.number,
-                    validator: (v) {
-                      if (v == null || v.trim().length < 6) return 'Enter 6-digit OTP';
-                      return null;
-                    },
+                    textInputAction: TextInputAction.done,
+                    validator: Validators.otp,
+                    maxLength: 6,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                   ),
                   const SizedBox(height: 22),
                   AppButton(
@@ -255,23 +276,58 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: const Text('Change mobile number'),
                   ),
                 ],
-                if (loading) ...[
-                  const SizedBox(height: 10),
-                  Text(
-                    'Server may take up to 45 seconds to wake up. Please keep this screen open.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey.shade700, fontSize: 13, height: 1.35),
-                  ),
-                ],
-                const SizedBox(height: 20),
+                if (loading) const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.push('/login/email'),
                   child: const Text(
-                    'Login with email instead',
+                    'Or continue with Email',
                     style: TextStyle(
-                      color: AppColors.goldDark,
-                      fontWeight: FontWeight.w600,
+                      color: AppColors.teal,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
                     ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text.rich(
+                    textAlign: TextAlign.center,
+                    TextSpan(
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12, height: 1.4),
+                      children: const [
+                        TextSpan(text: 'By continuing, you agree to our '),
+                        TextSpan(
+                          text: 'Terms & Privacy Policy',
+                          style: TextStyle(
+                            color: AppColors.teal,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  height: 120,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.tealLight.withValues(alpha: 0.3),
+                        Colors.white.withValues(alpha: 0),
+                      ],
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.directions_car_filled,
+                    size: 72,
+                    color: AppColors.teal,
                   ),
                 ),
               ],
@@ -279,6 +335,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 }

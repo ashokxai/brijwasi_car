@@ -12,10 +12,10 @@ String apiErrorMessage(Object e, {String fallback = 'Something went wrong. Pleas
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.sendTimeout) {
-      return AppConfig.serverWakingMessage;
+      return AppConfig.requestTimeoutMessage;
     }
     if (e.type == DioExceptionType.connectionError) {
-      return 'Cannot reach server. Check your internet or ${AppConfig.serverWakingMessage.toLowerCase()}';
+      return 'Cannot reach server. Check your internet connection and try again.';
     }
     if (e.response?.statusCode == 401) {
       return 'Invalid email or password';
@@ -28,7 +28,7 @@ String apiErrorMessage(Object e, {String fallback = 'Something went wrong. Pleas
   }
 
   if (e is TimeoutException) {
-    return AppConfig.serverWakingMessage;
+    return AppConfig.requestTimeoutMessage;
   }
 
   try {

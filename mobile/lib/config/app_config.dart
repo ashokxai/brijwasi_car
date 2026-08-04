@@ -11,12 +11,11 @@ class AppConfig {
   static const String contactPhone = '+917060221729';
   static const String contactWhatsapp = '917060221729';
 
-  /// Render free tier can take 30–60s to wake; keep requests open longer.
-  static const Duration apiConnectTimeout = Duration(seconds: 45);
-  static const Duration apiReceiveTimeout = Duration(seconds: 45);
+  static const Duration apiConnectTimeout = Duration(seconds: 30);
+  static const Duration apiReceiveTimeout = Duration(seconds: 30);
 
-  static const String serverWakingMessage =
-      'Server is waking up. Please wait about 30 seconds and try again.';
+  static const String requestTimeoutMessage =
+      'Request timed out. Check your connection and try again.';
 
   static String get callUrl => 'tel:$contactPhone';
   static String get whatsappUrl => 'https://wa.me/$contactWhatsapp';
