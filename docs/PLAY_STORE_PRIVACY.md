@@ -35,5 +35,5 @@ Permissions to declare: **Internet**, **Camera** (optional / photos for listings
 
 1. Deploy admin/Vercel so the policy URLs return **200** (not the SPA blank page).  
 2. Open both URLs in an Incognito browser.  
-3. Ensure `admin@brijwasicarbazaar.com` receives mail (or update the policy email to one you monitor).  
+3. Ensure `asisodia156@gmail.com` receives mail (or update the policy email to one you monitor).  
 4. Keep Data safety answers identical to the published Privacy Policy.
