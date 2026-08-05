@@ -10,6 +10,13 @@ Future<void> launchCall() async {
   }
 }
 
+Future<void> launchExternalUrl(String url) async {
+  final uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+}
+
 Future<void> launchWhatsApp({String? message}) async {
   final base = AppConfig.whatsappUrl;
   final uri = message == null || message.trim().isEmpty

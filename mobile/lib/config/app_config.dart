@@ -11,6 +11,16 @@ class AppConfig {
   static const String contactPhone = '+917060221729';
   static const String contactWhatsapp = '917060221729';
 
+  /// Public legal pages (host on admin Vercel or any HTTPS site for Play Console).
+  static const String privacyPolicyUrl = String.fromEnvironment(
+    'PRIVACY_POLICY_URL',
+    defaultValue: 'https://brijwasi-car.vercel.app/privacy-policy.html',
+  );
+  static const String termsOfServiceUrl = String.fromEnvironment(
+    'TERMS_OF_SERVICE_URL',
+    defaultValue: 'https://brijwasi-car.vercel.app/terms-of-service.html',
+  );
+
   static const Duration apiConnectTimeout = Duration(seconds: 30);
   static const Duration apiReceiveTimeout = Duration(seconds: 30);
 

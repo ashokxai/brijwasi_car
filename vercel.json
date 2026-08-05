@@ -8,6 +8,9 @@
     "VITE_API_URL": "https://dt-car-bazaar-api.onrender.com/api"
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/((?!privacy-policy\\.html|terms-of-service\\.html).*)",
+      "destination": "/index.html"
+    }
   ]
 }

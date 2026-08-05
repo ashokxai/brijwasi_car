@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../config/app_config.dart';
 import '../../config/theme.dart';
 import '../../models/phone_auth_result.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/auth_service.dart';
 import '../../services/firebase_service.dart';
 import '../../services/phone_auth_service.dart';
+import '../../utils/contact.dart';
 import '../../utils/validators.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_text_field.dart';
@@ -296,13 +298,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     textAlign: TextAlign.center,
                     TextSpan(
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 12, height: 1.4),
-                      children: const [
-                        TextSpan(text: 'By continuing, you agree to our '),
-                        TextSpan(
-                          text: 'Terms & Privacy Policy',
-                          style: TextStyle(
-                            color: AppColors.teal,
-                            fontWeight: FontWeight.w600,
+                      children: [
+                        const TextSpan(text: 'By continuing, you agree to our '),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.baseline,
+                          baseline: TextBaseline.alphabetic,
+                          child: GestureDetector(
+                            onTap: () => launchExternalUrl(AppConfig.termsOfServiceUrl),
+                            child: const Text(
+                              'Terms',
+                              style: TextStyle(
+                                color: AppColors.teal,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const TextSpan(text: ' & '),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.baseline,
+                          baseline: TextBaseline.alphabetic,
+                          child: GestureDetector(
+                            onTap: () => launchExternalUrl(AppConfig.privacyPolicyUrl),
+                            child: const Text(
+                              'Privacy Policy',
+                              style: TextStyle(
+                                color: AppColors.teal,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
                         ),
                       ],
