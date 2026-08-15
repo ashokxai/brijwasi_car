@@ -11,7 +11,15 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    phone: { type: String, required: true, trim: true },
+    phone: {
+      type: String,
+      trim: true,
+      default: '',
+      // Required for classic register; Google / Firebase users may not have a phone yet.
+      required: function requiredPhone() {
+        return !this.firebaseUid;
+      },
+    },
     password: {
       type: String,
       minlength: 6,

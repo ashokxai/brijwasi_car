@@ -144,6 +144,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    FocusScope.of(context).unfocus();
+    if (!FirebaseService.isConfigured) {
+      _showError('Firebase is not configured. Use phone or email login.');
+      return;
+    }
+    final ok = await ref.read(authProvider.notifier).loginWithGoogle();
+    if (!mounted) return;
+    if (ok) {
+      context.go('/home');
+      return;
+    }
+    final error = ref.read(authProvider).error;
+    if (error != null && error.isNotEmpty) _showError(error);
+  }
+
   Future<void> _afterFirebasePhoneSignIn() async {
     final outcome = await ref.read(authProvider.notifier).finishPhoneSignIn();
     if (!mounted) return;
@@ -192,7 +208,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   const SizedBox(height: 8),
                   const BrandHeader(
-                    subtitle: 'Login with OTP sent to your mobile number.',
+                    subtitle: 'Sign in with Google, or continue with mobile OTP.',
                   ),
                   const SizedBox(height: 28),
                 if (auth.error != null && auth.error!.isNotEmpty) ...[
@@ -212,6 +228,64 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ],
                 if (_step == _OtpStep.phone) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: OutlinedButton(
+                      onPressed: loading ? null : _signInWithGoogle,
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppColors.charcoal,
+                        side: const BorderSide(color: AppColors.border),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadii.button),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: loading && auth.isLoading
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.teal,
+                              ),
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.g_mobiledata, size: 32, color: Color(0xFF4285F4)),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Continue with Google',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: Colors.grey.shade300)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          'OR',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Divider(color: Colors.grey.shade300)),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                   AppTextField(
                     controller: _phoneCtrl,
                     label: 'Enter Mobile Number',
@@ -229,7 +303,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 24),
                   AppButton(
                     label: 'GET OTP',
-                    loading: loading,
+                    loading: _sendingOtp,
                     onPressed: _sendOtp,
                   ),
                 ] else ...[

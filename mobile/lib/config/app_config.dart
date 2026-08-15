@@ -21,6 +21,14 @@ class AppConfig {
     defaultValue: 'https://brijwasi-car.vercel.app/terms-of-service.html',
   );
 
+  /// Firebase Console → Authentication → Google → Web client ID
+  /// From google-services.json oauth_client client_type 3.
+  static const String googleWebClientId = String.fromEnvironment(
+    'GOOGLE_WEB_CLIENT_ID',
+    defaultValue:
+        '113559261780-i85m0penu6urb8ostlgmlgorcervs6bi.apps.googleusercontent.com',
+  );
+
   static const Duration apiConnectTimeout = Duration(seconds: 30);
   static const Duration apiReceiveTimeout = Duration(seconds: 30);
 

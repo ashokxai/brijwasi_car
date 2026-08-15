@@ -144,6 +144,37 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<bool> loginWithGoogle() async {
+    state = state.copyWith(
+      isLoading: true,
+      clearError: true,
+      isAuthenticated: false,
+      clearUser: true,
+    );
+    try {
+      final result = await _repo.loginWithGoogle();
+      state = AuthState(
+        user: result.user,
+        isAuthenticated: true,
+        isLoading: false,
+      );
+      return true;
+    } catch (e) {
+      final msg = _extractError(e);
+      // User cancelled Google picker — don't show as hard error.
+      if (msg.toLowerCase().contains('cancelled')) {
+        state = const AuthState(isLoading: false, isAuthenticated: false);
+        return false;
+      }
+      state = AuthState(
+        isLoading: false,
+        isAuthenticated: false,
+        error: msg,
+      );
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     await _repo.logout();
     state = const AuthState();

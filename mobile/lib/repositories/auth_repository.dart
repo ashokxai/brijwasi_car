@@ -15,6 +15,9 @@ class AuthRepository {
   Future<({String token, UserModel user})> login(String email, String password) =>
       _service.login(email: email, password: password);
 
+  Future<({String token, UserModel user})> loginWithGoogle() =>
+      _service.loginWithGoogle();
+
   Future<UserModel> profile() => _service.profile();
 
   Future<void> logout() => _service.logout();

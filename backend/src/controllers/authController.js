@@ -19,7 +19,7 @@ function authResponse(user, token) {
   };
 }
 
-async function findOrLinkFirebaseUser(decoded) {
+async function findOrLinkFirebaseUser(decoded, { autoCreate = false } = {}) {
   const email = String(decoded.email || '')
     .trim()
     .toLowerCase();
@@ -32,17 +32,44 @@ async function findOrLinkFirebaseUser(decoded) {
     (await User.findOne({ email }));
 
   if (!user) {
-    throw new AppError(
-      'Account not found. Please register first (app) or create the admin user in Mongo/seed.',
-      404
-    );
+    if (!autoCreate) {
+      throw new AppError(
+        'Account not found. Please register first (app) or create the admin user in Mongo/seed.',
+        404
+      );
+    }
+    const phone = phoneFromDecoded(decoded) || '';
+    const displayName =
+      String(decoded.name || '').trim() || email.split('@')[0] || 'User';
+    user = await User.create({
+      name: displayName,
+      email,
+      phone,
+      firebaseUid: decoded.uid,
+      role: 'customer',
+      password: crypto.randomBytes(32).toString('hex'),
+    });
+    return user;
   }
 
   if (!user.firebaseUid) {
     user.firebaseUid = decoded.uid;
+    if (decoded.name && String(decoded.name).trim()) {
+      user.name = String(decoded.name).trim();
+    }
     await user.save();
   } else if (user.firebaseUid !== decoded.uid) {
-    throw new AppError('This email is linked to another Firebase account', 409);
+    // Allow re-link after Firebase project migration when email matches.
+    const conflict = await User.findOne({
+      firebaseUid: decoded.uid,
+      _id: { $ne: user._id },
+    });
+    if (conflict) {
+      conflict.firebaseUid = undefined;
+      await conflict.save();
+    }
+    user.firebaseUid = decoded.uid;
+    await user.save();
   }
 
   return user;
@@ -132,7 +159,8 @@ exports.firebaseLogin = asyncHandler(async (req, res) => {
     throw new AppError(err.message || 'Invalid Firebase token', err.statusCode || 401);
   }
 
-  const user = await findOrLinkFirebaseUser(decoded);
+  // Auto-create customers for Google / email Firebase sign-in.
+  const user = await findOrLinkFirebaseUser(decoded, { autoCreate: true });
   if (!user.isActive) throw new AppError('Account is deactivated', 403);
   if (user.role !== 'customer') {
     throw new AppError('Please use Admin Login', 403);

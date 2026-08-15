@@ -4,6 +4,7 @@ import '../models/phone_auth_result.dart';
 import '../models/user_model.dart';
 import 'api_client.dart';
 import 'firebase_service.dart';
+import 'google_auth_service.dart';
 import 'phone_auth_service.dart';
 
 class AuthService {
@@ -60,6 +61,24 @@ class AuthService {
     return (token: token, user: UserModel.fromJson(res.data['user']));
   }
 
+  Future<({String token, UserModel user})> loginWithGoogle() async {
+    try {
+      final user = await GoogleAuthService.signIn();
+      final idToken = await user.getIdToken();
+      if (idToken == null || idToken.isEmpty) {
+        throw Exception('Could not verify Google account. Please try again.');
+      }
+      final res = await _api.dio.post('/auth/firebase/login', data: {
+        'idToken': idToken,
+      });
+      final token = res.data['token'] as String;
+      await _api.saveToken(token);
+      return (token: token, user: UserModel.fromJson(res.data['user']));
+    } on FirebaseAuthException catch (e) {
+      throw Exception(mapFirebaseAuthError(e));
+    }
+  }
+
   Future<({String token, UserModel user})> login({
     required String email,
     required String password,
@@ -102,6 +121,7 @@ class AuthService {
     } catch (_) {}
     try {
       if (FirebaseService.isConfigured) {
+        await GoogleAuthService.signOut();
         await FirebaseService.auth.signOut();
       }
     } catch (_) {}
@@ -131,8 +151,10 @@ class AuthService {
         return 'SMS limit reached. Try again later.';
       case 'missing-verification-code':
         return 'Enter the OTP sent to your phone';
+      case 'account-exists-with-different-credential':
+        return 'This email is already used with another sign-in method.';
       case 'app-not-authorized':
-        return 'Firebase setup incomplete. In Console (brijwasi-car-prod) add SHA-1 & SHA-256 for this app, wait 5 min, reinstall. On emulator use a test phone number or a real device.';
+        return 'Could not verify this app. Please update the app or try again.';
       default:
         return e.message ?? 'Authentication failed';
     }
