@@ -20,5 +20,7 @@ class AuthRepository {
 
   Future<UserModel> profile() => _service.profile();
 
+  Future<UserModel> updatePhone(String phone) => _service.updatePhone(phone);
+
   Future<void> logout() => _service.logout();
 }

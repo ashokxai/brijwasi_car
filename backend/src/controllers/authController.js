@@ -167,7 +167,8 @@ exports.firebaseLogin = asyncHandler(async (req, res) => {
   }
 
   const token = signToken({ id: user._id, role: user.role });
-  res.json(authResponse(user, token));
+  const needsPhone = !normalizeIndianPhone(user.phone);
+  res.json({ ...authResponse(user, token), needsPhone });
 });
 
 exports.firebasePhoneLogin = asyncHandler(async (req, res) => {
@@ -370,7 +371,20 @@ exports.updateProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id).select('+password');
 
   if (name) user.name = name;
-  if (phone) user.phone = phone;
+  if (phone !== undefined && phone !== null && String(phone).trim() !== '') {
+    const normalized = normalizeIndianPhone(phone);
+    if (!normalized) {
+      throw new AppError('Enter a valid 10-digit mobile number', 400);
+    }
+    const conflict = await User.findOne({
+      phone: normalized,
+      _id: { $ne: user._id },
+    });
+    if (conflict) {
+      throw new AppError('This mobile number is already registered', 409);
+    }
+    user.phone = normalized;
+  }
   if (password) user.password = password;
 
   await user.save();

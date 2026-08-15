@@ -115,6 +115,13 @@ class AuthService {
     return UserModel.fromJson(res.data['user']);
   }
 
+  Future<UserModel> updatePhone(String phone) async {
+    final res = await _api.dio.put('/profile', data: {
+      'phone': phone.trim(),
+    });
+    return UserModel.fromJson(res.data['user']);
+  }
+
   Future<void> logout() async {
     try {
       await _api.dio.post('/logout');

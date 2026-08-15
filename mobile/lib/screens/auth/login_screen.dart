@@ -153,7 +153,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final ok = await ref.read(authProvider.notifier).loginWithGoogle();
     if (!mounted) return;
     if (ok) {
-      context.go('/home');
+      final user = ref.read(authProvider).user;
+      if (user != null && user.needsPhone) {
+        context.go('/complete-phone');
+      } else {
+        context.go('/home');
+      }
       return;
     }
     final error = ref.read(authProvider).error;

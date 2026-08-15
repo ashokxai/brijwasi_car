@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../screens/auth/forgot_password_screen.dart';
+import '../screens/auth/complete_phone_screen.dart';
 import '../screens/auth/complete_profile_screen.dart';
 import '../screens/auth/email_login_screen.dart';
 import '../screens/auth/login_screen.dart';
@@ -46,6 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/login/email', builder: (_, __) => const EmailLoginScreen()),
       GoRoute(path: '/complete-profile', builder: (_, __) => const CompleteProfileScreen()),
+      GoRoute(path: '/complete-phone', builder: (_, __) => const CompletePhoneScreen()),
       GoRoute(
         path: '/register',
         redirect: (_, __) => '/login',
@@ -73,11 +75,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           loc == '/complete-profile' ||
           loc == '/forgot-password' ||
           loc == '/register';
+      final onCompletePhone = loc == '/complete-phone';
       final onSplash = loc == '/splash';
       final splashDone = ref.read(splashPresentationCompleteProvider);
+      final needsPhone = auth.isAuthenticated && (auth.user?.needsPhone ?? false);
 
       // Keep user on auth screens while login/register is in progress.
-      if (auth.isLoading && loggingIn) return null;
+      if (auth.isLoading && (loggingIn || onCompletePhone)) return null;
 
       if (onSplash && !splashDone) return null;
 
@@ -88,9 +92,16 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (!auth.isAuthenticated) {
         if (loggingIn) return null;
+        if (onCompletePhone) return '/login';
         return '/login';
       }
 
+      // First-time Google (or any account without a valid phone).
+      if (needsPhone) {
+        return onCompletePhone ? null : '/complete-phone';
+      }
+
+      if (onCompletePhone) return '/home';
       if (loggingIn || onSplash) return '/home';
       return null;
     },

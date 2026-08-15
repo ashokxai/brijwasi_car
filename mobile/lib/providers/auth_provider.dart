@@ -175,6 +175,25 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<bool> completePhone(String phone) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    try {
+      final user = await _repo.updatePhone(phone);
+      state = AuthState(
+        user: user,
+        isAuthenticated: true,
+        isLoading: false,
+      );
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: _extractError(e),
+      );
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     await _repo.logout();
     state = const AuthState();

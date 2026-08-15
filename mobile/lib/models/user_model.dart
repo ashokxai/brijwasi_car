@@ -1,3 +1,5 @@
+import '../utils/validators.dart';
+
 class UserModel {
   UserModel({
     required this.id,
@@ -14,6 +16,9 @@ class UserModel {
   final String phone;
   final String role;
   final List<String> favorites;
+
+  /// True when phone is missing or not a valid Indian mobile (first-time Google signup).
+  bool get needsPhone => Validators.phone(phone) != null;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
